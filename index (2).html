@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía práctica: indicadores y rúbricas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c66ff;
+            --secondary: #ff01ff;
+            --accent: #ffa500;
+            --bg-light: #f5f5f5;
+            --text-dark: #3d3838;
+            --success: #22c55e;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .solid-header {
+            background-color: #2c66ff;
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .tab-active {
+            border-bottom: 4px solid var(--secondary);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .taxonomy-pill {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .taxonomy-pill.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .copy-box {
+            background: #eef2ff;
+            border-left: 4px solid var(--primary);
+        }
+
+        .rubric-table th, .rubric-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            vertical-align: top;
+        }
+
+        .ra-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .points-row {
+            background-color: #f1f5f9;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Estilos de la lista de verificación */
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding: 10px 14px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .check-item:hover {
+            background: #dcfce7;
+        }
+
+        .check-item.checked {
+            background: #dcfce7;
+            opacity: 0.7;
+        }
+
+        .check-item.checked span {
+            text-decoration: line-through;
+            color: #15803d;
+        }
+
+        .check-item .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--success);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .check-item.checked .checkbox-custom {
+            background: var(--success);
+        }
+
+        .check-item.checked .checkbox-custom::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: white;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                position: static;
+                margin: 0 auto 1rem;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera con logo -->
+    <header class="solid-header text-white py-10 px-6 text-center shadow-lg">
+        <img src="UNIACC_LOGO2.png" alt="logo universidad" class="header-logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO+UNIACC'">
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">Guía pedagógica para la evaluación del aprendizaje</h1>
+        <p class="text-lg opacity-90">Construcción de indicadores de logro y rúbricas para educación superior</p>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto flex justify-around">
+            <button onclick="switchTab('indicadores')" id="tab-indicadores" class="py-4 px-6 tab-active flex items-center gap-2">
+                <i class="fas fa-bullseye"></i> Indicadores
+            </button>
+            <button onclick="switchTab('rubricas')" id="tab-rubricas" class="py-4 px-6 flex items-center gap-2">
+                <i class="fas fa-table"></i> Rúbricas
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6">
+        
+        <!-- SECCIÓN 1: INDICADORES -->
+        <section id="sec-indicadores">
+            <div class="mb-10 text-center">
+                <h2 class="text-2xl font-bold mb-6 text-[#2c66ff]">¿Qué utilizamos para construirlos?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card p-4 flex flex-col items-center border-b-4 border-[#2c66ff]">
+                        <i class="fas fa-brain text-3xl mb-2 text-[#2c66ff]"></i>
+                        <span class="font-bold">Taxonomía de Bloom</span>
+                    </div>
+                    <div class="card p-4 flex flex-col items-center border-b-4 border-[#ff01ff]">
+                        <i class="fas fa-th-list text-3xl mb-2 text-[#ff01ff]"></i>
+                        <span class="font-bold">Tabla de Quevedo y Corrales</span>
+                    </div>
+                    <div class="card p-4 flex flex-col items-center border-b-4 border-[#ffa500]">
+                        <i class="fas fa-robot text-3xl mb-2 text-[#ffa500]"></i>
+                        <span class="font-bold">Prompt institucional</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estructura de componentes -->
+            <div class="card p-6 border-t-4 border-[#2c66ff] mb-8 max-w-2xl mx-auto">
+                <h2 class="text-xl font-bold mb-4 text-[#2c66ff] text-center"><i class="fas fa-microchip mr-2"></i>Componentes del indicador</h2>
+                <div class="bg-blue-50 p-4 rounded-lg text-center text-md mb-4">
+                    <span class="font-bold text-[#2c66ff]">Verbo activo</span> + <span class="font-bold text-[#ff01ff]">objeto</span> + <span class="font-bold text-[#ffa500]">condición o contexto</span>
+                </div>
+                <p class="text-xs text-gray-500 text-center">Ejemplo: utiliza el modelo <span class="italic">CAPM</span> (verbo) en la estimación del costo de capital (objeto) de activos corporativos (contexto).</p>
+            </div>
+
+            <!-- Errores comunes -->
+            <div class="card p-6 mb-8 bg-red-50 border-l-8 border-red-500">
+                <h3 class="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle"></i> Errores comunes y cómo corregirlos
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-red-200">
+                        <span class="text-red-600 font-bold block mb-2 text-xs">Error: dos verbos activos</span>
+                        <p class="text-sm mb-2">"Clasifica <span class="italic">CT/FEO/FCL</span> y relaciona con metas..."</p>
+                        <i class="fas fa-arrow-down block text-center text-gray-400 my-2"></i>
+                        <span class="text-green-600 font-bold block mb-2 text-xs">Corrección 1: separar indicadores</span>
+                        <ul class="text-xs list-disc pl-4 space-y-1">
+                            <li>Clasifica <span class="italic">CT/FEO/FCL</span> dentro de un proceso de planificación.</li>
+                            <li>Relaciona los resultados con metas y objetivos estratégicos.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-green-200">
+                        <span class="text-green-600 font-bold block mb-2 text-xs">Corrección 2: integrar redacción</span>
+                        <p class="text-sm">"Clasifica <span class="italic">CT/FEO/FCL</span> en la planificación financiera vinculándolos con metas y objetivos estratégicos"</p>
+                        <p class="text-xs text-gray-500 mt-2">Usa gerundios o conectores para subordinar la segunda acción al verbo principal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de verificación -->
+            <div class="card p-6 border-t-4 border-[#22c55e] mb-12 max-w-2xl mx-auto">
+                <h2 class="text-xl font-bold mb-4 text-[#22c55e] text-center"><i class="fas fa-tasks mr-2"></i>Lista de verificación interactiva</h2>
+                <p class="text-xs text-gray-500 mb-4 text-center">Haz clic en cada ítem para verificar que tu indicador está listo.</p>
+                <div class="space-y-3" id="checklistContainer">
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="text-sm font-medium">¿Tiene solo un verbo activo?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="text-sm font-medium">¿El verbo se alinea con el nivel taxonómico del resultado de aprendizaje?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="text-sm font-medium">¿El contenido es observable y medible?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="text-sm font-medium">¿El contexto está claramente especificado?</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Explorador de verbos -->
+            <div class="card p-8 mb-12">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold mb-4">Explorador de verbos por nivel cognitivo</h3>
+                    <div class="bg-blue-50 border-l-4 border-[#2c66ff] p-4 mb-8 max-w-3xl mx-auto text-left">
+                        <p class="text-sm text-[#3d3838] leading-relaxed">
+                            <i class="fas fa-info-circle text-[#2c66ff] mr-2"></i>
+                            Utiliza este explorador para poder relacionar cada nivel taxonómico con verbos que te permitirán construir indicadores de logro de manera efectiva y alineada al resultado de aprendizaje.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-6">
+                        <button onclick="showVerbs(0)" class="taxonomy-pill active" data-index="0">Recordar</button>
+                        <button onclick="showVerbs(1)" class="taxonomy-pill" data-index="1">Comprender</button>
+                        <button onclick="showVerbs(2)" class="taxonomy-pill" data-index="2">Aplicar</button>
+                        <button onclick="showVerbs(3)" class="taxonomy-pill" data-index="3">Analizar</button>
+                        <button onclick="showVerbs(4)" class="taxonomy-pill" data-index="4">Evaluar</button>
+                        <button onclick="showVerbs(5)" class="taxonomy-pill" data-index="5">Crear</button>
+                    </div>
+                    <div id="verbDisplay" class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: RÚBRICAS -->
+        <section id="sec-rubricas" class="hidden">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#2c66ff] mb-2">Estrategias para la creación de rúbricas efectivas</h2>
+            </div>
+
+            <!-- Opción A -->
+            <div class="card p-6 mb-12 border-l-8 border-[#ff01ff]">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="bg-[#ff01ff] text-white p-3 rounded-lg shadow-md">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#3d3838]">Opción A: el indicador como criterio</h3>
+                        <p class="text-sm text-gray-600">El indicador de logro se mantiene de forma literal y se desglosa su cumplimiento.</p>
+                    </div>
+                </div>
+
+                <div class="ra-box p-4 rounded-lg mb-6 text-sm">
+                    <p class="mb-2"><strong>Resultado de aprendizaje:</strong> Caracteriza los distintos tipos de violencia en diversos contextos, integrando enfoques interdisciplinarios y marcos normativos.</p>
+                    <p><strong>Indicador de logro:</strong> Identifica los tipos de violencia en distintos contextos (familiar, escolar, digital, político).</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full rubric-table text-xs md:text-sm">
+                        <thead class="bg-gray-100 text-[10px]">
+                            <tr>
+                                <th class="w-1/6">Criterio de evaluación</th>
+                                <th class="text-green-700 bg-green-50">Logrado </th>
+                                <th class="text-blue-700 bg-blue-50">Medianamente logrado </th>
+                                <th class="text-orange-700 bg-orange-50">Escasamente logrado </th>
+                                <th class="text-red-700 bg-red-50">No logrado </th>
+                                <th class="text-gray-700 bg-gray-200">No entrega o no cumple </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="points-row">
+                                <td>Puntajes</td>
+                                <td>7 puntos</td>
+                                <td>5 puntos</td>
+                                <td>3 puntos</td>
+                                <td>1 punto</td>
+                                <td>0 puntos</td>
+                            </tr>
+                                <td class="font-bold bg-gray-50">Identifica los tipos de violencia en distintos contextos (familiar, escolar, digital, político).</td>
+                                <td>Identifica con precisión los distintos tipos de violencia en cada contexto (familiar, escolar, digital y político), proporcionando ejemplos concretos y pertinentes. Distingue adecuadamente entre formas de violencia similares, explica sus características principales y justifica por qué un caso corresponde a un tipo y no a otro.</td>
+                                <td>Identifica los principales tipos de violencia en la mayoría de los contextos solicitados, aunque con algunas imprecisiones o confusiones menores. Ofrece ejemplos generales, que, aun siendo correctos, no siempre reflejan con exactitud el tipo de violencia.</td>
+                                <td>Identifica de manera parcial solo algunos tipos de violencia o contextos. Los ejemplos proporcionados son escasos, vagos o presentan confusiones conceptuales importantes entre un tipo y otro.</td>
+                                <td>No logra identificar los tipos de violencia o los contextos solicitados. La información presentada es errónea, confusa o no guarda relación con los contenidos abordados en la asignatura.</td>
+                                <td class="bg-gray-50 text-gray-500">No entrega la actividad o el contenido presentado no cumple con los requisitos mínimos establecidos para ser evaluado.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Opción B -->
+            <div class="card p-6 mb-12 border-l-8 border-[#ffa500]">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="bg-[#ffa500] text-white p-3 rounded-lg shadow-md">
+                        <i class="fas fa-project-diagram text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#3d3838]">Opción B: criterios derivados</h3>
+                        <p class="text-sm text-gray-600">Se crean criterios a partir de los indicadores, cuidando mantener el nivel taxonómico y evidenciar la progresión.</p>
+                    </div>
+                </div>
+
+                <div class="ra-box p-4 rounded-lg mb-6 text-sm border-l-[#ffa500]">
+                    <p class="mb-2"><strong>Resultado de aprendizaje:</strong> Diseña estrategias de intervención psicosocial pertinentes y contextualizadas frente a situaciones de violencia, considerando factores individuales, grupales y comunitarios.</p>
+                    <p><strong>Indicador de logro:</strong> Propone estrategias de intervención para distintos tipos de violencia (género, escolar, laboral, niñez) con técnicas y protocolos aplicables.</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full rubric-table text-xs md:text-sm">
+                        <thead class="bg-gray-100 text-[10px]">
+                            <tr>
+                                <th class="w-1/6 text-left">Criterios de evaluación</th>
+                                <th class="text-green-700 bg-green-50">Logrado</th>
+                                <th class="text-blue-700 bg-blue-50">Medianamente logrado</th>
+                                <th class="text-orange-700 bg-orange-50">Escasamente logrado</th>
+                                <th class="text-red-700 bg-red-50">No logrado</th>
+                                <th class="text-gray-700 bg-gray-200">No entrega o no cumple</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="points-row">
+                                <td>Puntajes</td>
+                                <td>7 puntos</td>
+                                <td>5 puntos</td>
+                                <td>3 puntos</td>
+                                <td>1 punto</td>
+                                <td>0 puntos</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold bg-gray-50">Criterio 1: selecciona y justifica estrategias de intervención pertinentes para cada tipo de violencia.</td>
+                                <td>Selecciona estrategias de intervención específicas y pertinentes para cada tipo de violencia, considerando el contexto (familiar, escolar, digital, político) y las características particulares de la situación. Justifica cada estrategia con argumentos claros, basados en principios de prevención, acción o acompañamiento, demostrando comprensión profunda del problema y capacidad de fundamentación. Articula coherentemente por qué la estrategia elegida contribuye a mitigar o resolver la violencia identificada.</td>
+                                <td>Selecciona estrategias de intervención generalmente adecuadas, aunque algunas pueden resultar poco específicas o no completamente alineadas con el tipo de violencia descrito. Presenta una justificación básica, mencionando razones generales sin profundizar en el vínculo entre la estrategia y el contexto. Muestra comprensión suficiente, pero aún necesita fortalecer la precisión y la fundamentación.</td>
+                                <td>Selecciona estrategias de intervención que resultan vagas, poco contextualizadas o solo parcialmente vinculadas al tipo de violencia abordado. La justificación es débil, limitada a afirmaciones generales o sin evidencia clara de relación entre problema y solución. Demuestra dificultades para comprender qué hace pertinente o efectiva una estrategia en un contexto dado.</td>
+                                <td>No logra seleccionar estrategias de intervención adecuadas o propone acciones que no se relacionan con el tipo de violencia descrito. La justificación está ausente, es incorrecta o no guarda relación con las estrategias mencionadas. Evidencia falta de comprensión tanto del problema como de los criterios para una intervención pertinente.</td>
+                                <td class="bg-gray-50 text-gray-500">No se observa propuesta de estrategias ni justificación de las mismas.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold bg-gray-50">Criterio 2: explica por qué las estrategias seleccionadas son adecuadas y su relación con las técnicas y protocolos establecidos.</td>
+                                <td>Explica de manera clara y coherente por qué las estrategias seleccionadas son adecuadas para el tipo de violencia y el contexto abordado. Establece una relación explícita y fundamentada entre las estrategias propuestas y las técnicas o protocolos vigentes, demostrando comprensión de su propósito, alcance y aplicación. Justifica la elección considerando criterios éticos, preventivos y de resguardo, evidenciando una integración sólida entre teoría y práctica.</td>
+                                <td>Explica de forma general la adecuación de las estrategias seleccionadas, reconoció su relación con algunas técnicas o protocolos establecidos, aunque sin profundizar en su justificación o aplicación específica. La relación entre estrategia y protocolo es correcta, pero poco desarrollada o presentada de manera descriptiva más que analítica. Muestra comprensión suficiente, aunque requiere mayor claridad y precisión.</td>
+                                <td>Entrega explicaciones poco claras o incompletas sobre la adecuación de las estrategias seleccionadas. La relación con técnicas o protocolos aparece de manera superficial, implícita o confusa. Presenta dificultades para explicar cómo o por qué las estrategias se vinculan con los procedimientos establecidos, evidenciando comprensión limitada del marco de intervención.</td>
+                                <td>No explica adecuadamente por qué las estrategias seleccionadas son pertinentes ni establece relación con las técnicas o protocolos existentes. Las explicaciones son incorrectas, irrelevantes o inexistentes. Evidencia desconocimiento de los fundamentos que sustentan la intervención y de los protocolos asociados.</td>
+                                <td class="bg-gray-50 text-gray-500">No entrega explicación sobre la adecuación de las estrategias ni su relación con protocolos.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Generador con IA -->
+            <div class="card p-8 border-2 border-dashed border-[#2c66ff] bg-blue-50/30">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-[#2c66ff] text-white p-3 rounded-full">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-[#2c66ff]">Generador de descriptores con inteligencia artificial</h3>
+                    </div>
+                </div>
+                <div class="copy-box p-6 rounded-lg relative bg-white shadow-inner">
+                    <p id="promptText" class="text-gray-700 leading-relaxed text-sm">
+                        "A partir de los indicadores de logro que compartiré, debes construir para cada uno de ellos descriptores de desempeño, ordenados en los siguientes niveles: logrado (7 puntos), medianamente logrado (5 puntos), escasamente logrado (3 puntos), no logrado (1 punto), no entrega o no cumple (0 puntos). Establece diferencias importantes entre cada nivel que permitan desarrollar el proceso de evaluación de forma óptima, y ordénalos en una tabla. Criterios o indicadores: [ingresar aquí]"
+                    </p>
+                    <button onclick="copyPrompt()" class="mt-4 btn-primary flex items-center gap-2">
+                        <i class="fas fa-copy"></i> Copiar prompt
+                    </button>
+                    <div id="copyToast" class="hidden absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">¡Copiado!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-[#3d3838] text-white py-12 px-6 mt-12 relative overflow-hidden">
+        <div class="text-center">
+            <p class="text-sm opacity-75 mb-2 font-medium">Basado en el Modelo Pedagógico y los términos de referencia UNIACC.</p>
+            <p class="text-xs opacity-50">&copy; 2026 Dirección de ambientes virtuales de aprendizaje - UNIACC</p>
+            <div class="mt-4 flex justify-center gap-4 text-lg opacity-40">
+                <i class="fas fa-graduation-cap"></i>
+                <i class="fas fa-chalkboard-teacher"></i>
+                <i class="fas fa-laptop-code"></i>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const taxonomy = [
+            { level: "Recordar", verbs: ["identificar", "listar", "definir", "nombrar", "relatar", "describir", "localizar", "duplicar"] },
+            { level: "Comprender", verbs: ["explicar", "resumir", "interpretar", "clasificar", "comparar", "ejemplificar", "parafrasear", "inferir"] },
+            { level: "Aplicar", verbs: ["implementar", "usar", "ejecutar", "calcular", "evidenciar", "resolver", "operar", "programar"] },
+            { level: "Analizar", verbs: ["diferenciar", "organizar", "atribuir", "estructurar", "deconstruir", "integrar", "plantear", "relacionar"] },
+            { level: "Evaluar", verbs: ["criticar", "juzgar", "verificar", "revisar", "validar", "justificar", "recomendar", "fundamentar"] },
+            { level: "Crear", verbs: ["diseñar", "construir", "planear", "producir", "idear", "inventar", "desarrollar", "formular"] }
+        ];
+
+        function showVerbs(index) {
+            const display = document.getElementById('verbDisplay');
+            const pills = document.querySelectorAll('.taxonomy-pill');
+            if (!display) return;
+            
+            pills.forEach((p, i) => {
+                if(i == index) p.classList.add('active');
+                else p.classList.remove('active');
+            });
+            display.innerHTML = taxonomy[index].verbs.map(v => 
+                `<div class="bg-white border p-2 rounded shadow-sm hover:border-[#ff01ff] transition-colors text-sm font-medium">${v.charAt(0).toUpperCase() + v.slice(1)}</div>`
+            ).join('');
+        }
+
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+        }
+
+        function switchTab(tab) {
+            const secIndicadores = document.getElementById('sec-indicadores');
+            const secRubricas = document.getElementById('sec-rubricas');
+            const tabInd = document.getElementById('tab-indicadores');
+            const tabRub = document.getElementById('tab-rubricas');
+
+            if(tab === 'indicadores') {
+                secIndicadores.classList.remove('hidden');
+                secRubricas.classList.add('hidden');
+                tabInd.classList.add('tab-active');
+                tabRub.classList.remove('tab-active');
+            } else {
+                secIndicadores.classList.add('hidden');
+                secRubricas.classList.remove('hidden');
+                tabInd.classList.remove('tab-active');
+                tabRub.classList.add('tab-active');
+            }
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('promptText').innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            const toast = document.getElementById('copyToast');
+            if (toast) {
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2000);
+            }
+        }
+
+        window.onload = () => showVerbs(0);
+    </script>
+</body>
+</html>
